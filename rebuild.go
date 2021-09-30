@@ -63,7 +63,7 @@ func buildNode(val interface{}) (*yaml.Node, error) {
 		reflectedValue := reflect.ValueOf(val)
 		if t.Kind() == reflect.Array {
 			var nodeArr []*yaml.Node
-			l := t.Len()
+			l := reflectedValue.Len()
 			for i := 0; i < l; i++ {
 				n, err := buildNode(reflectedValue.Index(i).Interface())
 				if err != nil {
@@ -75,7 +75,7 @@ func buildNode(val interface{}) (*yaml.Node, error) {
 			n.Content = nodeArr
 		} else if t.Kind() == reflect.Slice {
 			var nodeArr []*yaml.Node
-			l := t.Len()
+			l := reflectedValue.Len()
 			for i := 0; i < l; i++ {
 				n, err := buildNode(reflectedValue.Index(i).Interface())
 				if err != nil {

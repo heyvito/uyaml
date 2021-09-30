@@ -101,3 +101,15 @@ func TestCreateStructure(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "usersCount: 2\nusers:\n  - name: josie\n    roles:\n      - bot\n      - foo\n      - bar\n    admin: true\n    createdAt: 0\n    weight: 1.3\n  - name: lester\n    roles:\n      - dummy\nadmins:\n  - name: josie\n    test: true\n", string(b))
 }
+
+func TestSetArray(t *testing.T) {
+	d, err := Decode([]byte(yamlFile))
+	require.NoError(t, err)
+	require.NotNil(t, d)
+	v, err := d.Set("users.(name='lester').roles", []string{"this", "is", "a", "test"})
+	assert.NotNil(t, v)
+	assert.NoError(t, err)
+	b, err := d.Encode()
+	assert.NoError(t, err)
+	assert.Equal(t, "usersCount: 2\nusers:\n  - name: josie\n    roles:\n      - bot\n      - foo\n      - bar\n    admin: true\n    createdAt: 0\n    weight: 1.3\n  - name: lester\n    roles:\n      - this\n      - is\n      - a\n      - test\n", string(b))
+}
