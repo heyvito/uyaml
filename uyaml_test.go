@@ -113,3 +113,16 @@ func TestSetArray(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "usersCount: 2\nusers:\n  - name: josie\n    roles:\n      - bot\n      - foo\n      - bar\n    admin: true\n    createdAt: 0\n    weight: 1.3\n  - name: lester\n    roles:\n      - this\n      - is\n      - a\n      - test\n", string(b))
 }
+
+func TestSet(t *testing.T) {
+	yaml := `image:
+  repo: foo
+  test: true`
+	d, err := Decode([]byte(yaml))
+	require.NoError(t, err)
+	_, err = d.Set("image.version", "1.0")
+	require.NoError(t, err)
+	b, err := d.Encode()
+	assert.NoError(t, err)
+	assert.Equal(t, "image:\n    repo: foo\n    test: true\n    version: \"1.0\"\n", string(b))
+}

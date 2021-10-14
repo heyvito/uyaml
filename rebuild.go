@@ -135,10 +135,10 @@ func set(root *yaml.Node, path string, value interface{}) (*Element, error) {
 	if err != nil {
 		return nil, err
 	}
+	obj := root
+	el := element(root)
 
 	for i, v := range composed {
-		obj := root
-		el := element(root)
 		switch t := v.(type) {
 		case pathKey:
 			if v, ok := applyPathKey(t, obj); ok {
@@ -183,7 +183,13 @@ func buildAndSet(el *Element, path []interface{}, value interface{}) error {
 		innerEl := el.value.Content[0]
 		innerEl.Content = append(innerEl.Content, e.value.Content...)
 	} else {
-		el.value.Content = append(el.value.Content, e.value)
+		if el.Kind() == e.Kind() {
+			// ...merge?
+			el.value.Content = append(el.value.Content, e.value.Content...)
+		} else {
+			// ...append?
+			el.value.Content = append(el.value.Content, e.value)
+		}
 	}
 
 	return nil
