@@ -61,7 +61,11 @@ func buildNode(val interface{}) (*yaml.Node, error) {
 	default:
 		t := reflect.TypeOf(val)
 		reflectedValue := reflect.ValueOf(val)
-		if t.Kind() == reflect.Array {
+
+		if t == nil {
+			n.Tag = "!!null"
+			n.Kind = yaml.ScalarNode
+		} else if t.Kind() == reflect.Array {
 			var nodeArr []*yaml.Node
 			l := reflectedValue.Len()
 			for i := 0; i < l; i++ {
