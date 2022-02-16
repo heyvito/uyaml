@@ -33,6 +33,7 @@ const (
 	KindMap            // map[string]interface{}
 	KindSlice          // []interface{}
 	KindInterface      // interface{}
+	KindNull           // nil
 )
 
 const (
@@ -59,6 +60,7 @@ var kindString = map[Kind]string{
 	KindSliceBool:   "SliceBool",
 	KindSliceMap:    "SliceMap",
 	KindSliceMixed:  "SliceMixed",
+	KindNull:        "Null",
 }
 
 var tagToKind = map[string]Kind{
@@ -68,6 +70,7 @@ var tagToKind = map[string]Kind{
 	"!!bool":  KindBool,
 	"!!int":   KindInt,
 	"!!float": KindFloat,
+	"!!null":  KindNull,
 }
 
 func element(n *yaml.Node) *Element {
@@ -287,7 +290,9 @@ func (e *Element) Interface() (bool, interface{}) {
 	case KindMap:
 		return e.Map()
 	case KindInterface:
-		// ?
+	// ?
+	case KindNull:
+		return true, nil
 	}
 
 	if e.Kind()&KindSlice == KindSlice {
@@ -392,6 +397,10 @@ func (e *Element) InterfaceSlice() (bool, []interface{}) {
 	}
 
 	return true, arr
+}
+
+func (e *Element) IsNull() bool {
+	return e.Kind() == KindNull
 }
 
 // Encode encodes the underlying value into a YAML representation

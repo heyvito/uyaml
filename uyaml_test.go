@@ -23,11 +23,11 @@ users:
 
 func TestDecode(t *testing.T) {
 	type userStruct struct {
-		Name string `yaml:"name"`
-		Roles []string `yaml:"roles"`
-		Admin bool `yaml:"admin"`
-		CreatedAt int `yaml:"createdAt"`
-		Weight float64 `yaml:"weight"`
+		Name      string   `yaml:"name"`
+		Roles     []string `yaml:"roles"`
+		Admin     bool     `yaml:"admin"`
+		CreatedAt int      `yaml:"createdAt"`
+		Weight    float64  `yaml:"weight"`
 	}
 	d, err := Decode([]byte(yamlFile))
 	require.NoError(t, err)
@@ -125,4 +125,15 @@ func TestSet(t *testing.T) {
 	b, err := d.Encode()
 	assert.NoError(t, err)
 	assert.Equal(t, "image:\n    repo: foo\n    test: true\n    version: \"1.0\"\n", string(b))
+}
+
+func TestNull(t *testing.T) {
+	yaml := `image:
+  list: null`
+	d, err := Decode([]byte(yaml))
+	require.NoError(t, err)
+	ok, i, err := d.DigItem("image.list")
+	require.NoError(t, err)
+	require.True(t, ok)
+	require.True(t, i.IsNull())
 }
